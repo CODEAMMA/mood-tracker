@@ -22,7 +22,7 @@ const Calendar = () => {
 		{ title: "Merdeka Day", date: new Date("2021-08-31") },
 	];
 	let [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
-	let [events, setEvents] = useState([0]);
+	let [events, setEvents] = useState([]);
 	let [input, setInput] = useState([]);
 	//let [drop,setDrop]= useState('');
 	//let [value,setValue] = useState('');
@@ -31,20 +31,34 @@ const Calendar = () => {
 		getEvents();
 	}, []);
 
+	useEffect(() => {
+		
+		console.log(events);
+	}, [events]);
+
 	const getEvents = () => {
 		fetch("/events")
 			.then((response) => response.json())
 			.then((events) => {
-				setEvents(events);
-				console.log(events);
-			})
+				console.log('setEvents')
+				setEvents(
+				events.map(e => {
+					return {
+						...e, 
+						date: new Date(e.date),						
+					}
+					
+									
+				}))
+
+				})
 			.catch((error) => {
 				console.log(error);
 			});
 	};
 
 	const handleChange = (event) => {
-		console.log(event,"takes in the input");
+		// console.log(event,"takes in the input");
 		
 		let value = event.target.value;
 		setInput({
@@ -63,12 +77,6 @@ const Calendar = () => {
 	    mood:value,
 
 		});
-
-		//let value = event.target.value;
-		// setInput({
-		// 	...input,
-		// 	[event.target.name]: value,
-		// });
 		
 	}
 
@@ -93,17 +101,35 @@ const Calendar = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
-				setEvents([
-					...events,
-					{
-						id: data[data.length - 1].id,
-						date: input.date,
-						// time: input.time.toString(),
-						title: input.title,
-						mood: input.mood,
-					},
-				]);
+				console.log("database",data);
+
+				setEvents([...events, {...data[data.length - 1], 
+					date: new Date(data[data.length - 1].date)}])
+
+				// setEvents([
+				// 	...events,
+				// 	{
+				// 		id: data[data.length - 1].id,
+				// 		date: input.date,
+				// 		// time: input.time.toString(),
+				// 		title: input.title,
+				// 		mood: input.mood,
+				// 	},
+				// ]);
+
+
+				// setEvents(
+				// 	data.map(e => {
+				// 		return {
+				// 			...events,
+				// 			...e, 
+				// 			date: new Date(e.date),						
+				// 		}
+//}))
+				// setEvents(data);  	
+											
+				
+				
 			});
 	};
 
@@ -138,10 +164,11 @@ const Calendar = () => {
 							data.map((item, index) => (
 								<DefaultMonthlyEventItem
 									key={index}
-									title={item.title}
+									title={`${item.title}, ${item.mood}`}
 									// Format the date here to be in the format you prefer
-									date={format(item.date, "k:mm")}
 									mood={item.mood}
+									date={format(item.date, "k:mm")}
+									
 								/>
 								
 							))
@@ -200,7 +227,7 @@ const Calendar = () => {
 							<td>
 																 
 								<DropdownButton
-								alignRight
+								alignright = "true"
 								id="dropdown-menu-align-right"
 								title ="My mood today"
 								type= "button"
@@ -224,22 +251,8 @@ const Calendar = () => {
 
 							<td></td>
 						</tr>
-						{events.map((e) => (
-							<tr>
-								<td>{e.date}</td>
-								{/* <td>{e.time}</td> */}
-								<td>{e.title}</td>
-								<td>{e.mood}</td>
-
-								<td
-									className="del-btn"
-									style={{ width: "1%" }}
-									onClick={() => deleteEvent(e.id)}
-								>
-									&times;
-								</td>
-							</tr>
-						))}
+						
+						
 					</tbody>
 				</table>
 			</form>

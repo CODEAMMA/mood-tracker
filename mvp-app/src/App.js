@@ -5,6 +5,7 @@ import News from "./components/News";
 import Weather from "./components/Weather";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {

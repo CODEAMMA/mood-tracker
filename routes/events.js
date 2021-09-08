@@ -28,6 +28,14 @@ router.get('/:id', function(req,res){
     .catch(err => res.status(404).send(err));
 })
 
+router.get('/mood', function(req,res){
+    db(`SELECT * FROM events WHERE mood=${req.params.mood};`)
+    .then(results => {
+        res.send(results.data);
+    })
+    .catch(err => res.status(404).send(err));
+})
+
 // INSERT a new title
 router.post("/", function(req,res){
     db(`INSERT INTO events (date,title,mood) VALUES ("${req.body.date}","${req.body.title}", "${req.body.mood}");`)

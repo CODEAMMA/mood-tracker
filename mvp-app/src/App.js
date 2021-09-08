@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Contacts from "./components/Contacts";
+import Mood from "./components/Mood";
+//import Moodcalendar from "./components/Mood";
 import Calendar from "./components/Calendar";
 import News from "./components/News";
 import Weather from "./components/Weather";
@@ -64,6 +66,7 @@ function App() {
         <Route path="/news" exact component={News} />
         <Route path="/contacts" exact component={Contacts} />
         <Route path="/" exact component={Calendar} />
+        <Route path="/mood-tracker" exact component={Mood} />
         <Route path="/weather" exact component={Weather} />
       </Router>
     </body>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from 'react-bootstrap/Dropdown';
+import Dropdown from "react-bootstrap/Dropdown";
 import "./Calendar.css";
 import { format, subHours, startOfMonth } from "date-fns";
-import moment from "moment";
+//import moment from "moment";
 import {
 	MonthlyBody,
 	MonthlyDay,
@@ -32,7 +32,6 @@ const Calendar = () => {
 	}, []);
 
 	useEffect(() => {
-		
 		console.log(events);
 	}, [events]);
 
@@ -40,18 +39,16 @@ const Calendar = () => {
 		fetch("/events")
 			.then((response) => response.json())
 			.then((events) => {
-				console.log('setEvents')
+				console.log("setEvents");
 				setEvents(
-				events.map(e => {
-					return {
-						...e, 
-						date: new Date(e.date),						
-					}
-					
-									
-				}))
-
-				})
+					events.map((e) => {
+						return {
+							...e,
+							date: new Date(e.date),
+						};
+					})
+				);
+			})
 			.catch((error) => {
 				console.log(error);
 			});
@@ -59,13 +56,13 @@ const Calendar = () => {
 
 	const handleChange = (event) => {
 		// console.log(event,"takes in the input");
-		
+
 		let value = event.target.value;
 		setInput({
 			...input,
 			[event.target.name]: value,
 		});
-		
+
 		//console.log(setInput);
 	};
 
@@ -74,19 +71,15 @@ const Calendar = () => {
 
 		setInput({
 			...input,
-	    mood:value,
-
+			mood: value,
 		});
-		
-	}
+	};
 
-				
-	
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		addEvent();
-			setInput({ date: "", title: "", mood: "", time: "" });
-		
+		setInput({ date: "", title: "", mood: "", time: "" });
+
 		//console.log(setInput);
 	};
 
@@ -94,17 +87,22 @@ const Calendar = () => {
 		fetch("/events", {
 			method: "POST",
 			headers: {
-				'Accept': 'application/text',
-				"Content-Type": "application/json"
+				Accept: "application/text",
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(input),
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("database",data);
+				console.log("database", data);
 
-				setEvents([...events, {...data[data.length - 1], 
-					date: new Date(data[data.length - 1].date)}])
+				setEvents([
+					...events,
+					{
+						...data[data.length - 1],
+						date: new Date(data[data.length - 1].date),
+					},
+				]);
 
 				// setEvents([
 				// 	...events,
@@ -117,19 +115,15 @@ const Calendar = () => {
 				// 	},
 				// ]);
 
-
 				// setEvents(
 				// 	data.map(e => {
 				// 		return {
 				// 			...events,
-				// 			...e, 
-				// 			date: new Date(e.date),						
+				// 			...e,
+				// 			date: new Date(e.date),
 				// 		}
-//}))
-				// setEvents(data);  	
-											
-				
-				
+				//}))
+				// setEvents(data);
 			});
 	};
 
@@ -155,32 +149,22 @@ const Calendar = () => {
 			>
 				<MonthlyNav />
 				{/* <button>Create Event</button> */}
-				
+
 				<MonthlyBody events={events}>
-				
 					<MonthlyDay
-					
 						renderDay={(data) =>
 							data.map((item, index) => (
 								<DefaultMonthlyEventItem
 									key={index}
-									title={`${item.title}, ${item.mood}`}
+									title={`${item.title} || Mood:${item.mood}`}
 									// Format the date here to be in the format you prefer
-									mood={item.mood}
 									date={format(item.date, "k:mm")}
 									
 								/>
-								
 							))
-							
 						}
-
-					
 					/>
-					
-
 				</MonthlyBody>
-				
 			</MonthlyCalendar>
 			<br />
 			<form onSubmit={(e) => handleSubmit(e)}>
@@ -225,24 +209,28 @@ const Calendar = () => {
 							</td>
 
 							<td>
-																 
 								<DropdownButton
-								alignright = "true"
-								id="dropdown-menu-align-right"
-								title ="My mood today"
-								type= "button"
-								data-toggle="dropdown"
-								name="mood"
-								value={input.mood}
-								onSelect={(e) => handleSelect(e)}>
-									<Dropdown.Item eventKey="Happy">Happy</Dropdown.Item>
-									<Dropdown.Item eventKey="Sad">
-										Sad
+									alignright="true"
+									id="dropdown-menu-align-right"
+									title="My mood today"
+									type="button"
+									size= "sm"
+									data-toggle="dropdown"
+									name="mood"
+									value={input.mood}
+									onSelect={(e) => handleSelect(e)}
+								>
+									<Dropdown.Item eventKey="Happy">
+										<span role="img" aria-label="Happy">
+											😀
+										</span>
 									</Dropdown.Item>
-									<Dropdown.Item eventKey="Angry">
-										Angry
-									</Dropdown.Item>
-								</DropdownButton>															  						
+									<Dropdown.Item eventKey="Sad"> 🥺 </Dropdown.Item>
+									<Dropdown.Item eventKey="Angry"> 😡 </Dropdown.Item>
+									<Dropdown.Item eventKey="Relaxed"> 💆 </Dropdown.Item>
+									<Dropdown.Item eventKey="Stressed"> 🤯 </Dropdown.Item>
+									<Dropdown.Item eventKey="Loved"> 🥰 </Dropdown.Item>
+								</DropdownButton>
 							</td>
 
 							<td>
@@ -251,8 +239,6 @@ const Calendar = () => {
 
 							<td></td>
 						</tr>
-						
-						
 					</tbody>
 				</table>
 			</form>
